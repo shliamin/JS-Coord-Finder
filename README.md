@@ -1,5 +1,5 @@
 # CoordFinder2
-This is the JS App using the three.js library to build a 3D scene.  
+###### This is the JS App using the three.js library to build a 3D scene.  
 
 1. Setup web pack dev server: [a good example](https://imranhsayed.medium.com/webpack-dev-server-b1010d01dba5).
 
@@ -11,7 +11,7 @@ This is the JS App using the three.js library to build a 3D scene.
 
 ###### Why this app:
 
-I created this application for the possibility in the future of creating a three-dimensional scene with real objects in real proportions.  At the moment, this is only a model that demonstrates the elements of creating and deleting objects on a plane, calculating coordinates by moving the cursor and calculating the lengths of segments.
+I created this application for the possibility in the future of creating a three-dimensional scene with real objects in real proportions.  At the moment, this is only a model that demonstrates the elements of creating and deleting objects on a plane, calculating coordinates by moving the cursor and calculating the lengths of segments. In addition, the area of the drawn triangles is also calculated.
 
 ###### What this app have and what it can do:
 

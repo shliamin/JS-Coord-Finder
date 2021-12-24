@@ -35,6 +35,9 @@
   var cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
   cube.position.x = 0, cube.position.y = 3, cube.position.z = 0
   cube.castShadow = true
+  var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+  cube2.position.x = 13, cube2.position.y = 3, cube2.position.z = 13
+  cube2.castShadow = true
   var planeGeometry = new THREE.PlaneGeometry(50,50,50);
   var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff})
   var plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -45,7 +48,7 @@
   spotLight.position.set (15,30,50)
 
 // Adding the objects to the scene and then rendering it:
-  scene.add(spotLight, grid, axis, cube, plane)
+  scene.add(spotLight, grid, axis, cube, cube2, plane)
   renderer.render(scene,camera)
 
 // Creating dynamically some elements inside the body of our HTML document:
