@@ -19,6 +19,8 @@ I created this application for the possibility in the future of creating a three
 
 2. The user can see in real time the change in the coordinates of the plane, depending on the movement along it with the mouse cursor
 
-3. You can draw and delete objects on the plane (spheres, lines)
+3. You can draw and delete objects on the plane (spheres, lines, triangles)
 
 4. You can see the real-time measured length of the line segments drawn on the plane
+
+5. You can see the real-time measured area of the triangles drawn on the plane

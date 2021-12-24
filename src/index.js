@@ -5,10 +5,12 @@
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 // Global arrays and counters:
-  var spheresIds = [] // for drawing and deleting spheres by their ids
+  var spheresIds = []    // for drawing and deleting spheres by their ids
   var spheresCoords = [] // for drawing and deleting lines between spheres
-  var linesIds = [] // for drawing and deleting lines by their ids
-  var lengthsArray = [] // to calculate the summ of all the lengths of all the lines drawn
+  var linesIds = []      // for drawing and deleting lines by their ids
+  var lengthsArray = []  // to calculate the summ of all the lengths of all the lines drawn
+  var trianglesIds = []  // for drawing and deleting triangles by their ids
+  var areasArray = []    // to calculate the summ of all the areas of all the triangles drawn
 
 // Defining scene, camera, renderer, and controls:
   var scene = new THREE.Scene()
@@ -74,7 +76,8 @@
       document.getElementById('coords').innerHTML = `Press the 'Alt'/'Option' Key + Mouse Left-click to draw a sphere on a plane
       or the 'Shift' Key + Mouse Left-click to delete the last sphere drawn.
       The coordinates of the plane are: x: ${objX.toFixed(1)}, y: ${objZ.toFixed(1)}. 
-      The length of the line is: ${lengthsArraySum(lengthsArray)}`
+      The length of the drawn line(s) is: ${arraySum(lengthsArray)}
+      The square of the drawn triangle(s) is: ${arraySum(areasArray)}`
       planeCoords.push({x: objX.toFixed(1), z: objZ.toFixed(1)})
     })
     return planeCoords // ... and here we return an array of hashes with our coordinates X and Z as a js object.
@@ -101,42 +104,80 @@
       scene.add(sphere) 
       spheresIds.push(sphere.id) // we memorize the id in a separate array to be able to find and remove it later
       spheresCoords.push({X:objX, Z:objZ}) // we memorize the coords of a sphere in a separate array to draw lines between it
-      // Lines are drawn only if we have more then two spheres on the scene:
+      // Lines are drawn only if we have more then one spheres on the scene:
       if (spheresIds.length > 1){
         const points = []
         points.push( new THREE.Vector3( objX, 0.01, objZ) )
         points.push( new THREE.Vector3( spheresCoords[spheresCoords.length-2].X, 0.01, spheresCoords[spheresCoords.length-2].Z) )
         const geometry = new THREE.BufferGeometry().setFromPoints( points )
-        const line = new THREE.Line( geometry, cubeMaterial)
+        const line = new THREE.Line( geometry)
         // We can calculate the length of the line:
-        let length = Math.sqrt(Math.pow(spheresCoords[spheresCoords.length-2].X - objX,2) + Math.pow(spheresCoords[spheresCoords.length-2].Z - objZ,2))
+        let length = lineLength(objX,spheresCoords[spheresCoords.length-2].X,spheresCoords[spheresCoords.length-2].Z,objZ)
         // ... and push the result to a separate array to later calculate the summ of all the lengths drown:
         lengthsArray.push(parseFloat(length.toFixed(1)))
         scene.add( line )
         linesIds.push(line.id) // we memorize the id in a separate array to be able to find and remove it later
       }
+      // Triangles are drawn only if we have more then two spheres on the scene:
+      if (spheresIds.length > 2){
+        let geometry = new THREE.BufferGeometry()
+        var vertices = new Float32Array([
+            objX, 0.01, objZ,
+            spheresCoords[spheresCoords.length-2].X, 0.01, spheresCoords[spheresCoords.length-2].Z,
+            spheresCoords[0].X, 0.01, spheresCoords[0].Z,
+        ])
+        var material = new THREE.MeshLambertMaterial({color: 0xff3300})
+        geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3) )
+        var triangle = new THREE.Mesh( geometry, material)
+        scene.add(triangle)
+        // We can calculate the area of the triangle:
+        let area = formulaOfHeron(lengthsArray[lengthsArray.length-1],lengthsArray[lengthsArray.length-2],lineLength(objX,spheresCoords[0].X,spheresCoords[0].Z,objZ))
+        // ... and push the result to a separate array to later calculate the summ of all the areas calculated:
+        areasArray.push(parseFloat(area.toFixed(1)))
+        trianglesIds.push(triangle.id) // we memorize the id in a separate array to be able to find and remove it later
+      }
       renderer.render(scene,camera) // render the scene and the camera after adding a sphere (and a line)
     }
     else if(e.shiftKey){ // deleting spheres (and lines)
       scene.remove(scene.getObjectById(spheresIds[spheresIds.length-1])) // find by id and remove it from the scene
-      // Lines are removed only if we have more then two spheres on the scene:
+      // Lines are removed only if we have more then one spheres on the scene:
       if (spheresIds.length > 1){
         scene.remove(scene.getObjectById(linesIds[linesIds.length-1])) // find by id and remove it from the scene
         linesIds.pop() // remove the last id from the array with all ids for the lines
         lengthsArray.pop() // remove the last length of the last line removed from the array of the lengths
+      }
+      // Triangles are removed only if we have more then two spheres on the scene:
+      if (spheresIds.length > 2){
+        scene.remove(scene.getObjectById(trianglesIds[trianglesIds.length-1])) // find by id and remove it from the scene
+        trianglesIds.pop() // remove the last id from the array with all ids for the triangles
+        areasArray.pop() // remove the last area of the last triangle removed from the array of the areas
       }
       spheresIds.pop() // remove the last id from the array with all ids for the spheres [should be removed the last]
       renderer.render(scene,camera) // render the scene and the camera after removing the sphere (and the line)
     }
   })
 
-  // This is the function to calculate the summ of all the lengths of all the lines drawn:
-  function lengthsArraySum(array){
+  // This is a function to calculate the length of a line:
+  function lineLength(x1,x2,y1,y2){
+    return Math.sqrt(Math.pow(x2 - x1,2) + Math.pow(y2 - y1,2))
+  }
+
+  // This is a function to calculate the area of any triangle:
+  function formulaOfHeron(a,b,c){
+    let semiPerimeter = (a + b + c)/2
+    return Math.sqrt(semiPerimeter*(semiPerimeter-a)*(semiPerimeter-b)*(semiPerimeter-c))
+  }
+
+  // This is a function to calculate the summ of all the lengths of all the lines drawn:
+  function arraySum(array){
     let sum = 0;
     for(let i = 0; i < array.length; i++) {
       sum += array[i]
     }
     return sum
   }
+
+
+
 
 
