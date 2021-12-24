@@ -42,7 +42,7 @@
   spotLight.castShadow = true
   spotLight.position.set (15,30,50)
 
-// Adding the objects to the scene and than rendering it:
+// Adding the objects to the scene and then rendering it:
   scene.add(spotLight, grid, axis, cube, plane)
   renderer.render(scene,camera)
 
@@ -101,7 +101,7 @@
       scene.add(sphere) 
       spheresIds.push(sphere.id) // we memorize the id in a separate array to be able to find and remove it later
       spheresCoords.push({X:objX, Z:objZ}) // we memorize the coords of a sphere in a separate array to draw lines between it
-      // Lines are drawn only if we have more than two spheres on the scene:
+      // Lines are drawn only if we have more then two spheres on the scene:
       if (spheresIds.length > 1){
         const points = []
         points.push( new THREE.Vector3( objX, 0.01, objZ) )
@@ -119,7 +119,7 @@
     }
     else if(e.shiftKey){ // deleting spheres (and lines)
       scene.remove(scene.getObjectById(spheresIds[spheresIds.length-1])) // find by id and remove it from the scene
-      // Lines are removed only if we have more than two spheres on the scene:
+      // Lines are removed only if we have more then two spheres on the scene:
       if (spheresIds.length > 1){
         scene.remove(scene.getObjectById(linesIds[linesIds.length-1])) // find by id and remove it from the scene
         linesIds.pop() // remove the last id from the array with all ids for the lines
