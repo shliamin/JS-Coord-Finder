@@ -113,6 +113,7 @@ window.addEventListener('click', function(e) {
       let length = lineLength(objX, spheresCoords[spheresCoords.length - 2].X, spheresCoords[spheresCoords.length - 2].Z, objZ)
       // ... and push the result to a separate array to later calculate the summ of all the lengths drown:
       lengthsArray.push(parseFloat(length.toFixed(1)))
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // let's display the length on the screen
       scene.add(line)
       linesIds.push(line.id) // we memorize the id in a separate array to be able to find and remove it later
     }
@@ -144,6 +145,7 @@ window.addEventListener('click', function(e) {
       scene.remove(scene.getObjectById(linesIds[linesIds.length - 1])) // find by id and remove it from the scene
       linesIds.pop() // remove the last id from the array with all ids for the lines
       lengthsArray.pop() // remove the last length of the last line removed from the array of the lengths
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // let's display the length on the screen
     }
     // Triangles are removed only if we have more then two spheres on the scene:
     if (spheresIds.length > 2) {
@@ -167,7 +169,7 @@ function formulaOfHeron(a, b, c) {
   return Math.sqrt(semiPerimeter * (semiPerimeter - a) * (semiPerimeter - b) * (semiPerimeter - c))
 }
 
-// This is a function to calculate the summ of all the lengths of all the lines drawn:
+// This is a function to calculate the sum of all the elements in an array:
 function arraySum(array) {
   let sum = 0;
   for (let i = 0; i < array.length; i++) {

@@ -6,7 +6,7 @@
     <!-- <base href="/"> -->
     <!-- <link type= "css" rel="stylesheet" href="styles.css"> -->
     <style>
-	#info-1{position:absolute;top:100px;left:60px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-3{position:absolute;top:100px;left:260px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-2{position:absolute;top:100px;left:260px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}body{margin:0px;overflow:hidden}.btn-ghost{position:absolute;top:30px;left:60px;z-index:100;display:block;color:rgb(250,250,250);border:1px solid rgb(250,250,250);padding:8px 24px;border-radius:50px;font-weight:lighter;opacity:0.6;transition:opacity 0.3s ease;text-decoration:none;font-family:'Rajdhani',sans-serif;touch-action:none}.btn-ghost-1{position:absolute;top:30px;left:260px;z-index:100;display:block;color:rgb(250,250,250);border:1px solid rgb(250,250,250);padding:8px 24px;border-radius:50px;font-weight:lighter;opacity:0.6;transition:opacity 0.3s ease;text-decoration:none;font-family:'Rajdhani',sans-serif;touch-action:none}.btn-ghost:hover{opacity:1;touch-action:none}.btn-ghost-1:hover{opacity:1;touch-action:none}.drag-drop-item{touch-action:none}#x-obj{color:#FFBF00;font-size:24px;font-weight:900}#z-obj{color:#FFBF00;font-size:24px;font-weight:900}#line{color:#D62B00;font-size:24px;font-weight:900}#color_line{color:#D62B00;font-size:24px;font-weight:900}#red-color{color:#D62B00}
+	#info-1{position:absolute;top:100px;left:60px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-3{position:absolute;top:100px;left:260px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-2{position:absolute;top:100px;left:260px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}body{margin:0px;overflow:hidden}.btn-ghost{position:absolute;top:30px;left:60px;z-index:100;display:block;color:rgb(250,250,250);border:1px solid rgb(250,250,250);padding:8px 24px;border-radius:50px;font-weight:lighter;opacity:0.6;transition:opacity 0.3s ease;text-decoration:none;font-family:'Rajdhani',sans-serif;touch-action:none}.btn-ghost-1{position:absolute;top:30px;left:260px;z-index:100;display:block;color:rgb(250,250,250);border:1px solid rgb(250,250,250);padding:8px 24px;border-radius:50px;font-weight:lighter;opacity:0.6;transition:opacity 0.3s ease;text-decoration:none;font-family:'Rajdhani',sans-serif;touch-action:none}.btn-ghost:hover{opacity:1;touch-action:none}.btn-ghost-1:hover{opacity:1;touch-action:none}.drag-drop-item{touch-action:none}#x-obj{color:#FFBF00;font-size:24px;font-weight:900}#z-obj{color:#FFBF00;font-size:24px;font-weight:900}#line{color:#FFBF00;font-size:24px;font-weight:900}#color_line{color:#D62B00;font-size:24px;font-weight:900}#red-color{color:#D62B00}
     </style>
     <link href="https://fonts.googleapis.com/css?family=Rajdhani:300&display=swap" rel="stylesheet">
   </head>
@@ -20,10 +20,10 @@
         <p> X : <span id="x-obj"></span></p>
         <p> Y : <span id="z-obj"></span></p>
       </div>
-    <div id="info-2">
-      <p>Lines length:</p>
-      <p><span id="line">sum: 0.0</span></p>
-    </div>
+	  <div id="info-2">
+	    <p>Line(s) length(s):</p>
+	    <p> Sum : <span id="line"></span></p>
+	  </div>
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
     <script src="https://rawgit.com/jeromeetienne/threex.domevents/master/threex.domevents.js"></script>
