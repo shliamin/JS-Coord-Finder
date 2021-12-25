@@ -31,7 +31,7 @@ renderer.render(scene, camera)
 
 // Defining objects, which we then add to the scene (axis, grid, colors, cubes, plane, spotlight):
 var axis = new THREE.AxesHelper(30)
-var grid = new THREE.GridHelper(50, 50)
+var grid = new THREE.GridHelper(50, 500)
 var color = new THREE.Color("rgb(255,0,0)")
 var cubeGeometry = new THREE.BoxGeometry(6, 6, 6)
 var cubeMaterial = new THREE.MeshLambertMaterial({
@@ -126,7 +126,9 @@ window.addEventListener('click', function(e) {
       let length = lineLength(objX, spheresCoords[spheresCoords.length - 2].X, spheresCoords[spheresCoords.length - 2].Z, objZ)
       // ... and push the result to a separate array to later calculate the summ of all the lengths drown:
       lengthsArray.push(parseFloat(length.toFixed(1)))
-      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // let's display the length on the screen
+      // Let's display the length and the amount on the screen:
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // length
+      document.getElementById('lines_amount').innerHTML = `${lengthsArray.length}`         // amount
       scene.add(line)
       linesIds.push(line.id) // we memorize the id in a separate array to be able to find and remove it later
     }
@@ -138,9 +140,10 @@ window.addEventListener('click', function(e) {
         spheresCoords[spheresCoords.length - 2].X, 0.01, spheresCoords[spheresCoords.length - 2].Z,
         spheresCoords[0].X, 0.01, spheresCoords[0].Z,
       ])
-      var material = new THREE.MeshLambertMaterial({
-        color: 0xff3300
+      var material = new THREE.MeshBasicMaterial({
+        transparent: true
       })
+      material.opacity = 0.3
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
       var triangle = new THREE.Mesh(geometry, material)
       scene.add(triangle)
@@ -148,7 +151,9 @@ window.addEventListener('click', function(e) {
       let area = formulaOfHeron(lengthsArray[lengthsArray.length - 1], lengthsArray[lengthsArray.length - 2], lineLength(objX, spheresCoords[0].X, spheresCoords[0].Z, objZ))
       // ... and push the result to a separate array to later calculate the summ of all the areas calculated:
       areasArray.push(parseFloat(area.toFixed(1)))
-      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` // let's display the area on the screen
+      // Let's display the area and the amount on the screen:
+      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` // area
+      document.getElementById('areas_amount').innerHTML = `${areasArray.length}`          // amount
       trianglesIds.push(triangle.id) // we memorize the id in a separate array to be able to find and remove it later
     }
     animate() // Let's now animate the scene
@@ -159,8 +164,9 @@ window.addEventListener('click', function(e) {
       scene.remove(scene.getObjectById(linesIds[linesIds.length - 1])) // find by id and remove it from the scene
       linesIds.pop() // remove the last id from the array with all ids for the lines
       lengthsArray.pop() // remove the last length of the last line removed from the array of the lengths
-      // Let's display the re-calculated length on the screen:
-      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}`
+      // Let's display the re-calculated length and amount on the screen:
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // length
+      document.getElementById('lines_amount').innerHTML = `${lengthsArray.length}`          // amount      
     }
     // Triangles are removed only if we have more than two spheres on the scene:
     if (spheresIds.length > 2) {
@@ -168,7 +174,8 @@ window.addEventListener('click', function(e) {
       trianglesIds.pop() // remove the last id from the array with all ids for the triangles
       areasArray.pop() // remove the last area of the last triangle removed from the array of the areas
       // Let's display the re-calculated area on the screen:
-      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}`
+      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` // area
+      document.getElementById('areas_amount').innerHTML = `${areasArray.length}`          // amount
     }
     spheresIds.pop() // remove the last id from the array with all ids for the spheres [should be removed the last]
     animate() // Let's now animate the scene
@@ -177,7 +184,7 @@ window.addEventListener('click', function(e) {
 
 // This is a function to calculate the length of a line:
 function lineLength(x1, x2, y1, y2) {
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+  return parseFloat(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)).toFixed(1))
 }
 
 // This is a function to calculate the area of any triangle:
