@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>CoordFinder2</title>
     <style>
-body{margin:0px;overflow:hidden}#info-1{position:absolute;top:100px;left:60px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-2{position:absolute;top:100px;left:260px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-3{position:absolute;top:100px;left:460px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}.btn-ghost{position:absolute;top:30px;left:60px;z-index:100;display:block;color:rgb(250,250,250);border:1px solid rgb(250,250,250);padding:8px 24px;border-radius:50px;font-weight:lighter;opacity:0.6;transition:opacity 0.3s ease;text-decoration:none;font-family:'Rajdhani',sans-serif;touch-action:none}.btn-ghost:hover{opacity:1;touch-action:none}.results{color:#FFBF00;font-size:24px;font-weight:900}
+body{margin:0px;overflow:hidden}#info-1{position:absolute;top:100px;left:60px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-2{position:absolute;top:100px;left:260px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}#info-3{position:absolute;top:100px;left:460px;width:50%;z-index:100;display:block;color:rgb(250,250,250);font-size:18px;justify-content:center;font-family:'Rajdhani',sans-serif}.btn-ghost{position:absolute;top:30px;left:100px;z-index:100;display:block;color:rgb(250,250,250);border:1px solid rgb(250,250,250);padding:8px 24px;border-radius:50px;font-weight:lighter;opacity:0.6;transition:opacity 0.3s ease;text-decoration:none;font-family:'Rajdhani',sans-serif;touch-action:none}.btn-ghost:hover{opacity:1;touch-action:none}.results{color:#FFBF00;font-size:24px;font-weight:900}
 </style>
     <link href="https://fonts.googleapis.com/css?family=Rajdhani:300&display=swap" rel="stylesheet">
   </head>
@@ -17,7 +17,7 @@ body{margin:0px;overflow:hidden}#info-1{position:absolute;top:100px;left:60px;wi
       </a>
     </div>
     <div id="info-1">
-      <p>3D-world coordinates:</p>
+      <p>Plane coordinates:</p>
       <p> X : <span id="x-obj" class="results"></span></p>
       <p> Y : <span id="z-obj" class="results"></span></p>
     </div>
@@ -29,6 +29,7 @@ body{margin:0px;overflow:hidden}#info-1{position:absolute;top:100px;left:60px;wi
 	  <p>Polygon(s) area(s):</p>
 	  <p> Sum : <span id="area" class="results"></span></p>
 	</div>
-    <div id="webGL-container"></div>
+    <div id="webGL-container">
+    </div>
   </body>
 </html>
