@@ -102,7 +102,7 @@ window.addEventListener('click', function(e) {
       X: objX,
       Z: objZ
     }) // we memorize the coords of a sphere in a separate array to draw lines between it
-    // Lines are drawn only if we have more then one spheres on the scene:
+    // Lines are drawn only if we have more than one spheres on the scene:
     if (spheresIds.length > 1) {
       const points = []
       points.push(new THREE.Vector3(objX, 0.01, objZ))
@@ -117,7 +117,7 @@ window.addEventListener('click', function(e) {
       scene.add(line)
       linesIds.push(line.id) // we memorize the id in a separate array to be able to find and remove it later
     }
-    // Triangles are drawn only if we have more then two spheres on the scene:
+    // Triangles are drawn only if we have more than two spheres on the scene:
     if (spheresIds.length > 2) {
       let geometry = new THREE.BufferGeometry()
       var vertices = new Float32Array([
@@ -135,23 +135,27 @@ window.addEventListener('click', function(e) {
       let area = formulaOfHeron(lengthsArray[lengthsArray.length - 1], lengthsArray[lengthsArray.length - 2], lineLength(objX, spheresCoords[0].X, spheresCoords[0].Z, objZ))
       // ... and push the result to a separate array to later calculate the summ of all the areas calculated:
       areasArray.push(parseFloat(area.toFixed(1)))
+      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` // let's display the area on the screen
       trianglesIds.push(triangle.id) // we memorize the id in a separate array to be able to find and remove it later
     }
     renderer.render(scene, camera) // render the scene and the camera after adding a sphere (and a line)
   } else if (e.shiftKey) { // deleting spheres (and lines)
     scene.remove(scene.getObjectById(spheresIds[spheresIds.length - 1])) // find by id and remove it from the scene
-    // Lines are removed only if we have more then one spheres on the scene:
+    // Lines are removed only if we have more than one spheres on the scene:
     if (spheresIds.length > 1) {
       scene.remove(scene.getObjectById(linesIds[linesIds.length - 1])) // find by id and remove it from the scene
       linesIds.pop() // remove the last id from the array with all ids for the lines
       lengthsArray.pop() // remove the last length of the last line removed from the array of the lengths
-      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // let's display the length on the screen
+      // Let's display the re-calculated length on the screen:
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` 
     }
-    // Triangles are removed only if we have more then two spheres on the scene:
+    // Triangles are removed only if we have more than two spheres on the scene:
     if (spheresIds.length > 2) {
       scene.remove(scene.getObjectById(trianglesIds[trianglesIds.length - 1])) // find by id and remove it from the scene
       trianglesIds.pop() // remove the last id from the array with all ids for the triangles
       areasArray.pop() // remove the last area of the last triangle removed from the array of the areas
+      // Let's display the re-calculated area on the screen:
+      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` 
     }
     spheresIds.pop() // remove the last id from the array with all ids for the spheres [should be removed the last]
     renderer.render(scene, camera) // render the scene and the camera after removing the sphere (and the line)
