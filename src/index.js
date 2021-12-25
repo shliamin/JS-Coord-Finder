@@ -20,7 +20,6 @@ var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHei
 camera.position.x = 40, camera.position.y = 40, camera.position.z = 40
 camera.lookAt(scene.position)
 var renderer = new THREE.WebGLRenderer()
-// var controls = new THREE.OrbitControls( camera); // not supported anymore
 var controls = new OrbitControls(camera, renderer.domElement)
 controls.addEventListener('change', render)
 renderer.setClearColor(0x000000)
@@ -29,7 +28,7 @@ renderer.shadowMap.enabled = true
 renderer.shadowMapSoft = true
 renderer.render(scene, camera)
 
-// Defining objects, which we then add to the scene (axis, grid, colors, cube, plane, spotlight):
+// Defining objects, which we then add to the scene (axis, grid, colors, cubes, plane, spotlight):
 var axis = new THREE.AxesHelper(30)
 var grid = new THREE.GridHelper(50, 50)
 var color = new THREE.Color("rgb(255,0,0)")
@@ -58,50 +57,28 @@ spotLight.position.set(15, 30, 50)
 scene.add(spotLight, grid, axis, cube, cube2, plane)
 renderer.render(scene, camera)
 
-// // Creating dynamically some elements inside the body of our HTML document:
-//   let coordsDiv = document.createElement('div')
-//   coordsDiv.id = 'coords'
-//   document.body.appendChild(coordsDiv) // for the main info and the info about plane coords
-// let mainDiv = document.createElement('div')
-// document.body.appendChild(mainDiv).appendChild(renderer.domElement) // for 3D-world
-
-var element = document.getElementById('webGL-container')
-document.body.appendChild(element).appendChild(renderer.domElement) // for 3D-world
-
-
+// Appending the 3D-world (JS, three.js) to the HTML-document in the pre-prepared div "webGl-container":
+document.body.appendChild(document.getElementById('webGL-container')).appendChild(renderer.domElement) 
 
 // A function to render the scene and the camera:
 function render() {
   renderer.render(scene, camera)
 }
 
-// By moving a cursor we want to measure, return and display on the doc the coordinates of the plane in our 3D-World:
-function getPlaneCoords() {
-  var planeCoords = []
-  window.addEventListener('mousemove', function(event) {
-    var vec = new THREE.Vector3()
-    var pos = new THREE.Vector3()
-    vec.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5)
-    vec.unproject(camera)
-    vec.sub(camera.position)
-    var distance = camera.position.y / vec.y
-    pos.copy(camera.position).add(vec.multiplyScalar(distance))
-    var objX = camera.position.x - vec.x
-    var objZ = camera.position.z - vec.z
-    document.getElementById('coords').innerHTML = `Press the 'Alt'/'Option' Key + Mouse Left-click to draw a sphere on a plane
-      or the 'Shift' Key + Mouse Left-click to delete the last sphere drawn.
-      The coordinates of the plane are: x: ${objX.toFixed(1)}, y: ${objZ.toFixed(1)}. 
-      The length of the drawn line(s) is: ${arraySum(lengthsArray)}
-      The square of the drawn triangle(s) is: ${arraySum(areasArray)}`
-    planeCoords.push({
-      x: objX.toFixed(1),
-      z: objZ.toFixed(1)
-    })
-  })
-  return planeCoords // ... and here we return an array of hashes with our coordinates X and Z as a js object.
-}
-
-getPlaneCoords()
+// By moving a cursor we want to measure and display on the document the coordinates of the plane in our 3D-World:
+window.addEventListener('mousemove', function(event) {
+  var vec = new THREE.Vector3()
+  var pos = new THREE.Vector3()
+  vec.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5)
+  vec.unproject(camera)
+  vec.sub(camera.position)
+  var distance = camera.position.y / vec.y
+  pos.copy(camera.position).add(vec.multiplyScalar(distance))
+  var objX = camera.position.x - vec.x
+  var objZ = camera.position.z - vec.z
+  document.getElementById('x-obj').innerHTML = `${objX.toFixed(1)}`
+  document.getElementById('z-obj').innerHTML = `${objZ.toFixed(1)}`
+})
 
 // Here we want to draw spheres (and lines) on a plane by clicking the left mouse key while holding down the "alt"/"option" key.
 // By clicking the left mouse key while holding down the "Q" key the last sphere (and the last line) added must/can be removed.
@@ -136,6 +113,7 @@ window.addEventListener('click', function(e) {
       let length = lineLength(objX, spheresCoords[spheresCoords.length - 2].X, spheresCoords[spheresCoords.length - 2].Z, objZ)
       // ... and push the result to a separate array to later calculate the summ of all the lengths drown:
       lengthsArray.push(parseFloat(length.toFixed(1)))
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // let's display the length on the screen
       scene.add(line)
       linesIds.push(line.id) // we memorize the id in a separate array to be able to find and remove it later
     }
@@ -167,6 +145,7 @@ window.addEventListener('click', function(e) {
       scene.remove(scene.getObjectById(linesIds[linesIds.length - 1])) // find by id and remove it from the scene
       linesIds.pop() // remove the last id from the array with all ids for the lines
       lengthsArray.pop() // remove the last length of the last line removed from the array of the lengths
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` // let's display the length on the screen
     }
     // Triangles are removed only if we have more then two spheres on the scene:
     if (spheresIds.length > 2) {
@@ -190,7 +169,7 @@ function formulaOfHeron(a, b, c) {
   return Math.sqrt(semiPerimeter * (semiPerimeter - a) * (semiPerimeter - b) * (semiPerimeter - c))
 }
 
-// This is a function to calculate the summ of all the lengths of all the lines drawn:
+// This is a function to calculate the sum of all the elements in an array:
 function arraySum(array) {
   let sum = 0;
   for (let i = 0; i < array.length; i++) {
