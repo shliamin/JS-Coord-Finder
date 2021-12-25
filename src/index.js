@@ -1,10 +1,11 @@
 // THIS IS AN JS-APP THAT USES THREE.JS LYBRARY TO CREATE A 3D-WORLD
 
-// Importing lybs THREE and OrbitControls previosly installed:
+// Importing lybs previosly installed:
 const THREE = require('three')
 import {
   OrbitControls
 } from 'three/examples/jsm/controls/OrbitControls.js'
+import Stats from 'three/examples/jsm/libs/stats.module'
 
 // Global arrays and counters:
 var spheresIds = [] // for drawing and deleting spheres by their ids
@@ -57,13 +58,25 @@ spotLight.position.set(15, 30, 50)
 scene.add(spotLight, grid, axis, cube, cube2, plane)
 renderer.render(scene, camera)
 
-// Appending the 3D-world (JS, three.js) to the HTML-document in the pre-prepared div "webGl-container":
-document.body.appendChild(document.getElementById('webGL-container')).appendChild(renderer.domElement) 
+
+// Let's add stats to see FPS on the screen:
+const stats = Stats()
+document.body.appendChild(stats.dom)
+
+// A function to animate the scene:
+function animate() {
+  requestAnimationFrame(animate)
+  render()
+  stats.update()
+}
 
 // A function to render the scene and the camera:
 function render() {
   renderer.render(scene, camera)
 }
+
+// Appending the 3D-world (JS, three.js) to the HTML-document in the pre-prepared div "webGl-container":
+document.body.appendChild(document.getElementById('webGL-container')).appendChild(renderer.domElement)
 
 // By moving a cursor we want to measure and display on the document the coordinates of the plane in our 3D-World:
 window.addEventListener('mousemove', function(event) {
@@ -138,7 +151,7 @@ window.addEventListener('click', function(e) {
       document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` // let's display the area on the screen
       trianglesIds.push(triangle.id) // we memorize the id in a separate array to be able to find and remove it later
     }
-    renderer.render(scene, camera) // render the scene and the camera after adding a sphere (and a line)
+    animate() // Let's now animate the scene
   } else if (e.shiftKey) { // deleting spheres (and lines)
     scene.remove(scene.getObjectById(spheresIds[spheresIds.length - 1])) // find by id and remove it from the scene
     // Lines are removed only if we have more than one spheres on the scene:
@@ -147,7 +160,7 @@ window.addEventListener('click', function(e) {
       linesIds.pop() // remove the last id from the array with all ids for the lines
       lengthsArray.pop() // remove the last length of the last line removed from the array of the lengths
       // Let's display the re-calculated length on the screen:
-      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}` 
+      document.getElementById('line').innerHTML = `${(arraySum(lengthsArray)).toFixed(1)}`
     }
     // Triangles are removed only if we have more than two spheres on the scene:
     if (spheresIds.length > 2) {
@@ -155,10 +168,10 @@ window.addEventListener('click', function(e) {
       trianglesIds.pop() // remove the last id from the array with all ids for the triangles
       areasArray.pop() // remove the last area of the last triangle removed from the array of the areas
       // Let's display the re-calculated area on the screen:
-      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}` 
+      document.getElementById('area').innerHTML = `${(arraySum(areasArray)).toFixed(1)}`
     }
     spheresIds.pop() // remove the last id from the array with all ids for the spheres [should be removed the last]
-    renderer.render(scene, camera) // render the scene and the camera after removing the sphere (and the line)
+    animate() // Let's now animate the scene
   }
 })
 
