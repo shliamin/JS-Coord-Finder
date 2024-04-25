@@ -25,4 +25,3 @@ I created this application for the possibility in the future of creating a three
 
 5. You can see the real-time measured area of the triangles drawn on the plane
 
-###### Demo on YouTube (in german): [CoordFinder2 on YouTube](https://youtu.be/dtthiPso9xM).
