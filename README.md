@@ -1,4 +1,4 @@
-# CoordFinder2
+# JS-Coord-Finder
 ###### This is the JS App using the three.js library to build a 3D scene.  
 
 1. Setup web pack dev server: [a good example](https://imranhsayed.medium.com/webpack-dev-server-b1010d01dba5).
