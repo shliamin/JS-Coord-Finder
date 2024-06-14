@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#info-1, #info-2, #info-3 {
+  position: absolute;
+  top: 100px;
+  width: 50%;
+  z-index: 100;
+  display: block;
+  color: rgb(250, 250, 250);
+  font-size: 18px;
+  justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+#info-1 {
+  left: 60px;
+}
+
+#info-2 {
+  left: 260px;
+}
+
+#info-3 {
+  left: 460px;
+}
+
+.btn-ghost {
+  position: absolute;
+  top: 30px;
+  left: 100px;
+  z-index: 100;
+  display: block;
+  color: rgb(250, 250, 250);
+  border: 1px solid rgb(250, 250, 250);
+  padding: 8px 24px;
+  border-radius: 50px;
+  font-weight: lighter;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  text-decoration: none;
+  font-family: 'Rajdhani', sans-serif;
+  touch-action: none;
+}
+
+.btn-ghost:hover {
+  opacity: 1;
+  touch-action: none;
+}
+
+.results {
+  color: #FFBF00;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+#webGL-container {
+  width: 100vw;
+  height: 100vh;
+}
