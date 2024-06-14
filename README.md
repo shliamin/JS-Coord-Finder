@@ -1,27 +1,15 @@
 # JS-Coord-Finder
-###### This is the JS App using the three.js library to build a 3D scene.  
 
-1. Setup web pack dev server: [a good example](https://imranhsayed.medium.com/webpack-dev-server-b1010d01dba5).
+###### This JS application uses the three.js library to build a 3D scene.
 
-2. To install the three.js library with npm do: `npm install three` and `npm install three-orbitcontrols`
+###### Why this app is awesome:
 
-3. To run the server: `npm run dev`
+I created this application to potentially create three-dimensional scenes with real objects in real proportions in the future. Currently, it is a model that demonstrates elements of creating and deleting objects on a plane, calculating coordinates by moving the cursor, and calculating the lengths of segments. Additionally, the area of the drawn triangles is also calculated.
 
-4. Then go to: `http://localhost:8080/`
+###### What this app can do:
 
-###### Why this app:
-
-I created this application for the possibility in the future of creating a three-dimensional scene with real objects in real proportions.  At the moment, this is only a model that demonstrates the elements of creating and deleting objects on a plane, calculating coordinates by moving the cursor and calculating the lengths of segments. In addition, the area of the drawn triangles is also calculated.
-
-###### What this app have and what it can do:
-
-1. A 3D-scene with objects, axis and light
-
-2. The user can see in real time the change in the coordinates of the plane, depending on the movement along it with the mouse cursor
-
-3. You can draw and delete objects on the plane (spheres, lines, triangles)
-
-4. You can see the real-time measured length of the line segments drawn on the plane
-
-5. You can see the real-time measured area of the triangles drawn on the plane
-
+1. Create a 3D scene with objects, axes, and lighting.
+2. Users can see real-time changes in plane coordinates as they move the mouse cursor.
+3. You can draw and delete objects on the plane (spheres, lines, triangles).
+4. You can see the real-time measured length of line segments drawn on the plane.
+5. You can see the real-time measured area of triangles drawn on the plane.
