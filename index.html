@@ -5,6 +5,15 @@
     <title>CoordFinder2</title>
     <link href="https://fonts.googleapis.com/css?family=Rajdhani:300&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js",
+        "three/examples/jsm/controls/OrbitControls.js": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/jsm/controls/OrbitControls.js",
+        "three/examples/jsm/libs/stats.module": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/jsm/libs/stats.module.js"
+      }
+    }
+    </script>
   </head>
   <body>
     <div>
@@ -30,7 +39,6 @@
       <p> Amount : <span id="areas_amount" class="results"></span></p>
     </div>
     <div id="webGL-container"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script type="module" src="index.js"></script>
   </body>
 </html>
