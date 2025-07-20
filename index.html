@@ -1,44 +1,236 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>CoordFinder</title>
-    <link href="https://fonts.googleapis.com/css?family=Rajdhani:300&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D CAD Designer - Professional Drawing & Measurement Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js",
-        "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js",
-        "three/examples/jsm/libs/stats.module": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/libs/stats.module.js"
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js",
+        "three/examples/jsm/libs/stats.module": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/stats.module.js"
       }
     }
     </script>
-  </head>
-  <body>
-    <div>
-      <a class="btn-ghost" href="#">
-        1. Press the 'Alt'/'Option' button + the Left Mouse Button to draw a sphere on the plane.
-        <br>
-        2. Press the 'Shift' button + the Left Mouse Button to delete it.
-      </a>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="app-title">
+                <i class="fas fa-cube"></i>
+                3D CAD Designer
+            </h1>
+        </div>
+        <div class="header-center">
+            <div class="project-info">
+                <span id="project-name">Untitled Project</span>
+                <span class="project-status" id="project-status">Unsaved</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-primary" id="save-project">
+                <i class="fas fa-save"></i> Save
+            </button>
+            <button class="btn btn-secondary" id="load-project">
+                <i class="fas fa-folder-open"></i> Load
+            </button>
+            <button class="btn btn-secondary" id="export-project">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-section">
+            <h3>Drawing Tools</h3>
+            <div class="tool-group">
+                <button class="tool-btn active" id="tool-point" data-tool="point" title="Point Tool (P)">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="tool-btn" id="tool-line" data-tool="line" title="Line Tool (L)">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="tool-btn" id="tool-polygon" data-tool="polygon" title="Polygon Tool (G)">
+                    <i class="fas fa-draw-polygon"></i>
+                </button>
+                <button class="tool-btn" id="tool-circle" data-tool="circle" title="Circle Tool (C)">
+                    <i class="far fa-circle"></i>
+                </button>
+                <button class="tool-btn" id="tool-rectangle" data-tool="rectangle" title="Rectangle Tool (R)">
+                    <i class="far fa-square"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="toolbar-section">
+            <h3>Actions</h3>
+            <div class="tool-group">
+                <button class="action-btn" id="undo" title="Undo (Ctrl+Z)">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="action-btn" id="redo" title="Redo (Ctrl+Y)">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="action-btn" id="clear-all" title="Clear All">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="action-btn" id="delete-selected" title="Delete Selected (Del)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="toolbar-section">
+            <h3>View</h3>
+            <div class="tool-group">
+                <button class="action-btn" id="view-top" title="Top View">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" id="view-reset" title="Reset View">
+                    <i class="fas fa-home"></i>
+                </button>
+                <button class="action-btn" id="toggle-grid" title="Toggle Grid">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="action-btn" id="toggle-snap" title="Toggle Snap">
+                    <i class="fas fa-magnet"></i>
+                </button>
+            </div>
+        </div>
     </div>
-    <div id="info-1">
-      <p>Plane coordinates:</p>
-      <p> X : <span id="x-obj" class="results"></span></p>
-      <p> Y : <span id="z-obj" class="results"></span></p>
+
+    <!-- Side Panels -->
+    <div class="side-panel left-panel">
+        <div class="panel-section">
+            <h3>Layers</h3>
+            <div class="layers-container" id="layers-container">
+                <div class="layer-item active" data-layer="0">
+                    <span class="layer-visibility" title="Toggle Visibility">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                    <span class="layer-name">Layer 1</span>
+                    <span class="layer-count">0</span>
+                </div>
+            </div>
+            <button class="btn btn-small" id="add-layer">
+                <i class="fas fa-plus"></i> Add Layer
+            </button>
+        </div>
+
+        <div class="panel-section">
+            <h3>Precision</h3>
+            <div class="precision-controls">
+                <label>
+                    Grid Size:
+                    <input type="number" id="grid-size" value="1" min="0.1" max="10" step="0.1">
+                </label>
+                <label>
+                    Snap Tolerance:
+                    <input type="number" id="snap-tolerance" value="0.5" min="0.1" max="2" step="0.1">
+                </label>
+                <label>
+                    <input type="checkbox" id="enable-snap" checked>
+                    Enable Grid Snap
+                </label>
+            </div>
+        </div>
     </div>
-    <div id="info-2">
-      <p>Line(s) length(s):</p>
-      <p> Sum : <span id="line" class="results"></span></p>
-      <p> Amount : <span id="lines_amount" class="results"></span></p>
+
+    <div class="side-panel right-panel">
+        <div class="panel-section">
+            <h3>Properties</h3>
+            <div class="properties-container" id="properties-container">
+                <p class="no-selection">No object selected</p>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h3>Measurements</h3>
+            <div class="measurements-container">
+                <div class="measurement-item">
+                    <label>Total Objects:</label>
+                    <span id="total-objects">0</span>
+                </div>
+                <div class="measurement-item">
+                    <label>Total Length:</label>
+                    <span id="total-length">0.0</span>
+                </div>
+                <div class="measurement-item">
+                    <label>Total Area:</label>
+                    <span id="total-area">0.0</span>
+                </div>
+                <div class="measurement-item">
+                    <label>Selected Object:</label>
+                    <span id="selected-info">None</span>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="info-3">
-      <p>Polygon(s) area(s):</p>
-      <p> Sum : <span id="area" class="results"></span></p>
-      <p> Amount : <span id="areas_amount" class="results"></span></p>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span>Coordinates: </span>
+            <span>X: <span id="cursor-x">0.0</span></span>
+            <span>Y: <span id="cursor-y">0.0</span></span>
+        </div>
+        <div class="status-center">
+            <span id="current-tool">Point Tool Active</span>
+        </div>
+        <div class="status-right">
+            <span>Objects: <span id="object-count">0</span></span>
+            <span>|</span>
+            <span>FPS: <span id="fps-counter">60</span></span>
+        </div>
     </div>
-    <div id="webGL-container"></div>
+
+    <!-- 3D Canvas Container -->
+    <div id="webgl-container" class="webgl-container"></div>
+
+    <!-- Modals -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Export Project</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <label>
+                        <input type="radio" name="export-type" value="json" checked>
+                        JSON Data (.json)
+                    </label>
+                    <label>
+                        <input type="radio" name="export-type" value="csv">
+                        CSV Coordinates (.csv)
+                    </label>
+                    <label>
+                        <input type="radio" name="export-type" value="image">
+                        PNG Image (.png)
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="confirm-export">Export</button>
+                    <button class="btn btn-secondary" id="cancel-export">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Loading 3D CAD Designer...</p>
+        </div>
+    </div>
+
     <script type="module" src="index.js"></script>
-  </body>
+</body>
 </html>
