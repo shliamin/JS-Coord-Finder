@@ -24,7 +24,7 @@ class CADApplication {
         this.mouse = new THREE.Vector2();
         
         // Application state
-        this.currentTool = 'point';
+        this.currentTool = 'select';
         this.selectedObjects = [];
         this.layers = [{ name: 'Layer 1', visible: true, objects: [] }];
         this.currentLayer = 0;
@@ -72,8 +72,8 @@ class CADApplication {
     setupScene() {
         // Scene setup
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x121212);
-        this.scene.fog = new THREE.Fog(0x121212, 100, 1000);
+        this.scene.background = new THREE.Color(0x2a2a2a);
+        this.scene.fog = new THREE.Fog(0x2a2a2a, 100, 1000);
 
         // Camera setup
         this.camera = new THREE.PerspectiveCamera(
@@ -149,17 +149,21 @@ class CADApplication {
     }
 
     setupSceneObjects() {
-        // Grid
-        this.grid = new THREE.GridHelper(100, 100, 0x3C3C3C, 0x2D2D30);
+        // Grid - Make it more visible with better colors
+        this.grid = new THREE.GridHelper(100, 100, 0x888888, 0x444444);
         this.grid.material.transparent = true;
         this.grid.material.opacity = 0.8;
         this.scene.add(this.grid);
 
-        // Axes helper
+        // Axes helper - Make it more prominent and centered at origin
         this.axes = new THREE.AxesHelper(25);
+        this.axes.position.set(0, 0, 0);
         this.scene.add(this.axes);
+        
+        // Add coordinate labels at origin
+        this.addCoordinateLabels();
 
-        // Ground plane (invisible, for raycasting)
+        // Ground plane (invisible, for raycasting) - Make sure it's centered at origin
         const planeGeometry = new THREE.PlaneGeometry(1000, 1000);
         const planeMaterial = new THREE.MeshBasicMaterial({ 
             visible: false,
@@ -167,8 +171,51 @@ class CADApplication {
         });
         this.groundPlane = new THREE.Mesh(planeGeometry, planeMaterial);
         this.groundPlane.rotation.x = -Math.PI / 2;
+        this.groundPlane.position.set(0, 0, 0); // Ensure it's centered at origin
         this.groundPlane.name = 'groundPlane';
         this.scene.add(this.groundPlane);
+        
+        // Add a small marker at the origin (0,0,0)
+        const originGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const originMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xff0000,
+            transparent: true,
+            opacity: 0.8
+        });
+        this.originMarker = new THREE.Mesh(originGeometry, originMaterial);
+        this.originMarker.position.set(0, 0.5, 0);
+        this.originMarker.name = 'originMarker';
+        this.scene.add(this.originMarker);
+    }
+    
+    addCoordinateLabels() {
+        // This will add text labels at the origin to help with coordinate reference
+        // Since we can't easily add text in Three.js without additional libraries,
+        // we'll add colored spheres to mark key coordinate points
+        
+        // X-axis markers (red)
+        for (let i = -50; i <= 50; i += 10) {
+            if (i === 0) continue; // Skip origin
+            const marker = new THREE.Mesh(
+                new THREE.SphereGeometry(0.2, 8, 8),
+                new THREE.MeshBasicMaterial({ color: 0xff4444, transparent: true, opacity: 0.6 })
+            );
+            marker.position.set(i, 0.2, 0);
+            marker.name = `x_marker_${i}`;
+            this.scene.add(marker);
+        }
+        
+        // Z-axis markers (blue)
+        for (let i = -50; i <= 50; i += 10) {
+            if (i === 0) continue; // Skip origin
+            const marker = new THREE.Mesh(
+                new THREE.SphereGeometry(0.2, 8, 8),
+                new THREE.MeshBasicMaterial({ color: 0x4444ff, transparent: true, opacity: 0.6 })
+            );
+            marker.position.set(0, 0.2, i);
+            marker.name = `z_marker_${i}`;
+            this.scene.add(marker);
+        }
     }
 
     setupEventListeners() {
@@ -225,6 +272,17 @@ class CADApplication {
         });
         document.getElementById('enable-snap')?.addEventListener('change', (e) => {
             this.snapEnabled = e.target.checked;
+        });
+        
+        // Project name input
+        document.getElementById('project-name')?.addEventListener('input', () => {
+            document.getElementById('project-status').textContent = 'Unsaved';
+        });
+        
+        document.getElementById('project-name')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.target.blur(); // Remove focus to "save" the name
+            }
         });
     }
 
@@ -304,11 +362,32 @@ class CADApplication {
         this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObject(this.groundPlane);
-
-        if (intersects.length > 0) {
-            const point = intersects[0].point;
+        
+        // First check for object selection (excluding ground plane and grid)
+        const selectableObjects = this.objects.map(obj => obj.mesh).filter(mesh => mesh.visible);
+        const objectIntersects = this.raycaster.intersectObjects(selectableObjects);
+        
+        if (objectIntersects.length > 0 && this.currentTool === 'select') {
+            // Object selection mode
+            const selectedMesh = objectIntersects[0].object;
+            const cadObject = selectedMesh.userData.cadObject;
+            
+            if (cadObject) {
+                this.selectObject(cadObject, event.shiftKey);
+                return;
+            }
+        }
+        
+        // If no object selected or not in select mode, proceed with drawing tools
+        const groundIntersects = this.raycaster.intersectObject(this.groundPlane);
+        if (groundIntersects.length > 0) {
+            const point = groundIntersects[0].point;
             const snappedPoint = this.snapEnabled ? this.snapToGrid(point) : point;
+            
+            // Clear selection if not in select mode and not holding shift
+            if (this.currentTool !== 'select' && !event.shiftKey) {
+                this.clearSelection();
+            }
             
             this.handleToolAction(snappedPoint);
         }
@@ -355,6 +434,9 @@ class CADApplication {
         } else {
             // Tool shortcuts
             switch (event.key.toLowerCase()) {
+                case 's':
+                    this.setTool('select');
+                    break;
                 case 'p':
                     this.setTool('point');
                     break;
@@ -378,6 +460,73 @@ class CADApplication {
                     this.cancelDrawing();
                     break;
             }
+        }
+    }
+
+    // ============================================================================
+    // OBJECT SELECTION
+    // ============================================================================
+
+    selectObject(cadObject, addToSelection = false) {
+        if (!addToSelection) {
+            this.clearSelection();
+        }
+        
+        if (!cadObject.selected) {
+            cadObject.selected = true;
+            this.selectedObjects.push(cadObject);
+            
+            // Add visual selection feedback
+            this.addSelectionHighlight(cadObject);
+        }
+        
+        this.updateProperties();
+    }
+    
+    clearSelection() {
+        this.selectedObjects.forEach(obj => {
+            obj.selected = false;
+            this.removeSelectionHighlight(obj);
+        });
+        this.selectedObjects = [];
+        this.updateProperties();
+    }
+    
+    addSelectionHighlight(cadObject) {
+        // Create a wireframe highlight
+        const mesh = cadObject.mesh;
+        let highlightGeometry;
+        
+        if (mesh.geometry) {
+            highlightGeometry = mesh.geometry.clone();
+        } else {
+            // For lines, create a slightly thicker version
+            highlightGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+        }
+        
+        const highlightMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const highlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
+        highlight.position.copy(mesh.position);
+        highlight.rotation.copy(mesh.rotation);
+        highlight.scale.copy(mesh.scale).multiplyScalar(1.1);
+        highlight.name = `highlight_${cadObject.id}`;
+        
+        this.scene.add(highlight);
+        cadObject.highlight = highlight;
+    }
+    
+    removeSelectionHighlight(cadObject) {
+        if (cadObject.highlight) {
+            this.scene.remove(cadObject.highlight);
+            cadObject.highlight.geometry?.dispose();
+            cadObject.highlight.material?.dispose();
+            delete cadObject.highlight;
         }
     }
 
@@ -420,14 +569,14 @@ class CADApplication {
     }
 
     drawPoint(position) {
-        const geometry = new THREE.SphereGeometry(0.3, 16, 16);
+        const geometry = new THREE.SphereGeometry(0.5, 16, 16);
         const material = new THREE.MeshLambertMaterial({ 
             color: 0x007ACC,
             emissive: 0x002244
         });
         const sphere = new THREE.Mesh(geometry, material);
         sphere.position.copy(position);
-        sphere.position.y = 0.3;
+        sphere.position.y = 0.5; // Place at ground level but slightly elevated for visibility
         sphere.castShadow = true;
         
         const cadObject = this.createCADObject('point', sphere, { position: position.clone() });
@@ -1224,8 +1373,12 @@ class CADApplication {
     // ============================================================================
 
     saveProject() {
+        const projectNameElement = document.getElementById('project-name');
+        const projectName = projectNameElement ? projectNameElement.value || 'Untitled Project' : 'Untitled Project';
+        
         const projectData = {
             version: '2.0.0',
+            name: projectName,
             timestamp: new Date().toISOString(),
             objects: this.objects.map(obj => ({
                 id: obj.id,
@@ -1244,11 +1397,12 @@ class CADApplication {
             }
         };
         
+        const fileName = projectName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.json';
         const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'cad-project.json';
+        a.download = fileName;
         a.click();
         URL.revokeObjectURL(url);
         
@@ -1325,8 +1479,11 @@ class CADApplication {
         this.updateLayers();
         this.updateProperties();
         
-        // Update project status
-        document.getElementById('project-name').textContent = 'Loaded Project';
+        // Update project status and name
+        const projectNameElement = document.getElementById('project-name');
+        if (projectNameElement && projectData.name) {
+            projectNameElement.value = projectData.name;
+        }
         document.getElementById('project-status').textContent = 'Loaded';
     }
 

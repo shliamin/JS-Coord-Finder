@@ -28,7 +28,7 @@
         </div>
         <div class="header-center">
             <div class="project-info">
-                <span id="project-name">Untitled Project</span>
+                <input type="text" id="project-name" value="Untitled Project" class="project-name-input" placeholder="Project Name"/>
                 <span class="project-status" id="project-status">Unsaved</span>
             </div>
         </div>
@@ -50,7 +50,10 @@
         <div class="toolbar-section">
             <h3>Drawing Tools</h3>
             <div class="tool-group">
-                <button class="tool-btn active" id="tool-point" data-tool="point" title="Point Tool (P)">
+                <button class="tool-btn active" id="tool-select" data-tool="select" title="Select Tool (S)">
+                    <i class="fas fa-mouse-pointer"></i>
+                </button>
+                <button class="tool-btn" id="tool-point" data-tool="point" title="Point Tool (P)">
                     <i class="fas fa-circle"></i>
                 </button>
                 <button class="tool-btn" id="tool-line" data-tool="line" title="Line Tool (L)">
